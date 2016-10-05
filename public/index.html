@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat~~</title>
+    <style>
+        #chat {
+            height:500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat"></div>
+    <form id="send-message">
+        <input size="35" id="message"></input>
+        <input type="submit"></input>
+    </form>
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="../socket.io/socket.io.js"></script>
+    <script>
+        jQuery(function($){
+            var socket = io.connect();//引入的socket.io
+                                        // !!!與server端的socketio做連接！！！
+            var $messageForm = $('#send-message');
+            var $messageBox = $('#message');
+            var $chat = $('#chat');
+
+            $messageForm.submit(function(e){
+                e.preventDefault(); //不想重load，用了socketio所以可以，且都要加這一行
+                socket.emit('send message' , $messageBox.val());
+                console.log($messageBox.val());
+                        //因為有做連接，所以這邊把客戶端的資料，透過send message事件去觸發後端的socketio處理送過去的訊息：mBox.val()
+                $messageBox.val('');
+
+            });
+
+            //一定要放在外面！！！複習！！！！....如果放在裡面又訂了一次就會悲劇一堆訊息....
+            //從後端接送過來的資料，並『呈現！！』
+            socket.on('new message' , function(data){
+                $chat.append( data + "<br/>" );
+            });
+            //一定要放在外面！！！複習！！！！
+            //放裡面等於一直重複訂閱..等於一個頁面一堆通道...每個通道都會接到送來的廣播訊息so...
+        });
+    </script>
+</body>
+</html>
+
+
+
+
