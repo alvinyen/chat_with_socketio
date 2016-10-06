@@ -23,9 +23,10 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
     socket.on('send message',function(data){
 
         //因為是即時聊天app，所以只要有客戶送資料過來，『則其他有連接的客戶端都要把這個資料同步出去！！』
-        socketio_serverInstance.sockets.emit('new message',data); //送出資料給所有連接使用者 !!! including me !!!『包含』送資料過來的那個使用者
+        socketio_serverInstance.sockets.emit('new message', { "nickname":socket.nickname , "msg": data } ); //送出資料給所有連接使用者 !!! including me !!!『包含』送資料過來的那個使用者
             //     類似的function
         //socketio_serverInstance.broadcast.emit('new message',data); //送出資料給所有連接使用者!!!except me !!!『除了』送資料過來的那個使用者
+
 
     });
 
