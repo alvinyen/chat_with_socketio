@@ -51,6 +51,8 @@
             var $nickNameError = $('#nickNameError');
             var $nickNameBox = $('#nickNameBox');
 
+            var $usersWrap = $('#usersWrap');
+
             var $messageForm = $('#send-message');
             var $messageBox = $('#message');
             var $chat = $('#chat');
@@ -84,6 +86,16 @@
             });
             //一定要放在外面！！！複習！！！！
             //放裡面等於一直重複訂閱..等於一個頁面一堆通道...每個通道都會接到送來的廣播訊息so...
+
+
+            socket.on( 'user list changed' , function(userList){
+                //console.log(userList);
+                var html = '';
+                for(var i = 0; i < userList.length ; i++){
+                    html += userList[i] + '<br/>';
+                }
+                $usersWrap.html(html);
+            });
         });
     </script>
 </body>
