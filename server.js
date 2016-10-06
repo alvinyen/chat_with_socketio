@@ -11,6 +11,8 @@ var socketio_serverInstance = socketio.listen(server);
 
 server.listen(3000);
 
+console.log('server is running on port 3000 now..');
+
 app.get('/',function(req,res){
     res.sendFile( path.join( __dirname , '/public/index.html') );
 });
