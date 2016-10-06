@@ -29,6 +29,10 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
 
     });
 
+    function updateUserList(){
+        socketio_serverInstance.sockets.emit( 'user list changed' , nicknames);
+    }
+
     socket.on('new user check' , function( data , callback ){
         console.log(data);
         if(nicknames.indexOf(data) != -1){
@@ -38,9 +42,15 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
             callback(true);
             nicknames.push(data);
             console.log(nicknames);
-            socketio_serverInstance.sockets.emit( 'user list changed' , nicknames);
+            updateUserList();
         }
     });
+
+    socket.on('disconnect' , function(data){
+        if(!socket.nickname) return;
+        nicknames.splice( nicknames.indexOf(socket.nickname) , 1);
+        updateUserList();
+    })
 
 });
 
