@@ -28,9 +28,6 @@
         </form>
     </div>
 
-
-
-
     <div id="contentWrap">
         <div id="chatWrap">
             <div id="chat"></div>
@@ -49,9 +46,27 @@
         jQuery(function($){
             var socket = io.connect();//引入的socket.io
                                         // !!!與server端的socketio做連接！！！
+
+            var $nickNameForm = $('#setNickName');
+            var $nickNameError = $('#nickNameError');
+            var $nickNameBox = $('#nickNameBox');
+
             var $messageForm = $('#send-message');
             var $messageBox = $('#message');
             var $chat = $('#chat');
+
+            $nickNameForm.submit(function(e){
+               e.preventDefault();                                  //設定最後這個callback極其重要！！
+                socket.emit('new user check', $nickNameBox.val() , function(data){
+                    if(data){
+                        $('#nickNameWrap').hide();
+                        $('#contentWrap').show();
+                    }else{
+                        $nickNameError.html('that username is already taken...');
+                    }
+                });
+                $nickNameBox.val('');
+            });
 
             $messageForm.submit(function(e){
                 e.preventDefault(); //不想重load，用了socketio所以可以，且都要加這一行

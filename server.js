@@ -5,6 +5,7 @@ var path = require('path');
 
 var app = express();
 var server = http.createServer(app);
+var nicknames = [];
 
 //小心注意..一定要接『伺服器端的socketio的實例』啊！！...不要直接拿require的core module來用...
 var socketio_serverInstance = socketio.listen(server);
@@ -26,6 +27,19 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
             //     類似的function
         //socketio_serverInstance.broadcast.emit('new message',data); //送出資料給所有連接使用者!!!except me !!!『除了』送資料過來的那個使用者
 
+    });
+
+    socket.on('new user check' , function( data , callback ){
+        console.log(data);
+        if(nicknames.indexOf(data) != -1){
+            callback(false); //或是callback({"isValid":false});
+        }else{
+            socket.nickname = data;
+            callback(true);
+            nicknames.push(data);
+            console.log(nicknames);
+            socketio_serverInstance.sockets.emit( 'user list changed' , nicknames);
+        }
     });
 
 });
