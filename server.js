@@ -33,7 +33,9 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
 
     function updateUserList(){
         // socketio_serverInstance.sockets.emit( 'user list changed' , nicknames);
-        socketio_serverInstance.sockets.emit( 'user list changed' , users);
+        // socketio_serverInstance.sockets.emit( 'user list changed' , users);
+                                            //等等...不要像上面那樣直接送整個物件過去，太奇怪了，我們送key array 過去就好..
+        socketio_serverInstance.sockets.emit( 'user list changed' , Object.keys(users));
     }
 
     socket.on('new user check' , function( data , callback ){
@@ -41,15 +43,15 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
 
         // if(nicknames.indexOf(data) != -1){
         if( data in users ){
-                callback(false); //或是callback({"isValid":false});
-            }else{
-                socket.nickname = data;
-                callback(true);
-                // nicknames.push(data);
-                users[socket.nickname] = socket; //in ch3,改用nickname 作為id , socket則為value
-                console.log(nicknames);
-                updateUserList();
-            }
+            callback(false); //或是callback({"isValid":false});
+        }else{
+            socket.nickname = data;
+            callback(true);
+            // nicknames.push(data);
+            users[socket.nickname] = socket; //in ch3,改用nickname 作為id , socket則為value
+            // console.log(nicknames);
+            console.log(socket.nickname);
+            updateUserList();
         }
     });
 
