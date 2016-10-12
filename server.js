@@ -5,7 +5,8 @@ var path = require('path');
 
 var app = express();
 var server = http.createServer(app);
-var nicknames = [];
+//var nicknames = [];
+var users = {} ;
 
 //小心注意..一定要接『伺服器端的socketio的實例』啊！！...不要直接拿require的core module來用...
 var socketio_serverInstance = socketio.listen(server);
@@ -31,25 +32,31 @@ socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的so
     });
 
     function updateUserList(){
-        socketio_serverInstance.sockets.emit( 'user list changed' , nicknames);
+        // socketio_serverInstance.sockets.emit( 'user list changed' , nicknames);
+        socketio_serverInstance.sockets.emit( 'user list changed' , users);
     }
 
     socket.on('new user check' , function( data , callback ){
         console.log(data);
-        if(nicknames.indexOf(data) != -1){
-            callback(false); //或是callback({"isValid":false});
-        }else{
-            socket.nickname = data;
-            callback(true);
-            nicknames.push(data);
-            console.log(nicknames);
-            updateUserList();
+
+        // if(nicknames.indexOf(data) != -1){
+        if( data in users ){
+                callback(false); //或是callback({"isValid":false});
+            }else{
+                socket.nickname = data;
+                callback(true);
+                // nicknames.push(data);
+                users[socket.nickname] = socket; //in ch3,改用nickname 作為id , socket則為value
+                console.log(nicknames);
+                updateUserList();
+            }
         }
     });
 
     socket.on('disconnect' , function(data){
         if(!socket.nickname) return;
-        nicknames.splice( nicknames.indexOf(socket.nickname) , 1);
+        // nicknames.splice( nicknames.indexOf(socket.nickname) , 1);
+        delete users[socket.nickname];
         updateUserList();
     })
 
