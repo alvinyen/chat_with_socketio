@@ -21,12 +21,18 @@ app.get('/',function(req,res){
 
             //注意是socket"s" !!! logic !!!
 socketio_serverInstance.sockets.on('connection',function(socket){  //這裡的socket代表user端的socket
-    socket.on('send message',function(data){
+    socket.on('send message',function(data , callback){
 
         var rawMsg = data.trim();
+                    //代表字串index 0~2
         if( rawMsg.substr(0,3) === '/w '){
-            console.log('whisper');
-            console.log(rawMsg.substr(3));
+            var namePmsg = rawMsg.substr(3);
+            if( namePmsg.indexOf(' ') !== -1 ){
+                console.log('valid the username and handle the private msg..');
+            }else{
+                callback('error！！pls enter a msg for your whisper..');
+                //↑↑↑客戶端的扣中，callback內容含有jQuery，為何有辦法在server端去執行？？
+            }
         }else{
             //因為是即時聊天app，所以只要有客戶送資料過來，『則其他有連接的客戶端都要把這個資料同步出去！！』
             socketio_serverInstance.sockets.

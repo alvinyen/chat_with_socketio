@@ -15,6 +15,9 @@
             float: left;
             border: 1px #000 solid;
         }
+        .error {
+            color:red;
+        }
     </style>
 </head>
 
@@ -72,7 +75,9 @@
 
             $messageForm.submit(function(e){
                 e.preventDefault(); //不想重load，用了socketio所以可以，且都要加這一行
-                socket.emit('send message' , $messageBox.val());
+                socket.emit('send message' , $messageBox.val() , function(errorMsg){
+                    $chat.append('<span class="error"><b>'+ errorMsg + '</b></span><br/>');
+                });
                 console.log($messageBox.val());
                         //因為有做連接，所以這邊把客戶端的資料，透過send message事件去觸發後端的socketio處理送過去的訊息：mBox.val()
                 $messageBox.val('');
